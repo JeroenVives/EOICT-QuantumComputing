@@ -9,6 +9,3 @@ venv/
 
 # Secrets — never commit tokens
 .env
-
-# Teacher's solutions — do not publish
-solutions_teacher.ipynb
