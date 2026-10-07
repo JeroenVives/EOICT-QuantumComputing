@@ -1,0 +1,14 @@
+[project]
+name = "qclab"
+version = "0.1.0"
+description = "Beginner Quantum Computing course: exercises with Qiskit (simulation + optional real IBM Quantum hardware)"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+    "qiskit>=2.5,<3.0",
+    "qiskit-aer>=0.17",
+    "qiskit-ibm-runtime>=0.40",
+    "matplotlib>=3.9",
+    "pylatexenc>=2.10",
+    "python-dotenv>=1.0",
+    "numpy>=1.26",
+]
