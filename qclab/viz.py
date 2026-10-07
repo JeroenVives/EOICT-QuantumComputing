@@ -6,6 +6,7 @@ with ``plt.show()`` or ``display(...)``.
 
 from __future__ import annotations
 
+import matplotlib
 import numpy as np
 
 import matplotlib.pyplot as plt
@@ -17,13 +18,28 @@ from qiskit.visualization import plot_histogram
 from .states import statevector_of
 
 
+def _close_if_inline(fig: plt.Figure) -> plt.Figure:
+    """Close *fig* under Jupyter's inline backend, then return it.
+
+    In a notebook a figure is shown twice if it is both *returned* (the
+    cell output hook displays it) and still *open* at the end of the cell
+    (the inline backend auto-flushes every open figure). Closing it first
+    leaves exactly one render — the same trick qiskit's own plotting
+    functions use. On non-inline backends the figure stays open so that
+    external tools (``savefig``, scripts, tests) can still use it.
+    """
+    if matplotlib.get_backend() == "module://matplotlib_inline.backend_inline":
+        plt.close(fig)
+    return fig
+
+
 def draw_circuit(circuit: QuantumCircuit, title: str | None = None) -> plt.Figure:
     """Draw a circuit as a matplotlib figure (better looking than text art)."""
     fig = circuit.draw("mpl")
     fig.set_size_inches((max(5, circuit.size() * 0.6), max(2, circuit.num_qubits * 0.8 + 1)))
     if title:
         fig.suptitle(title, y=1.02)
-    return fig
+    return _close_if_inline(fig)
 
 
 def plot_counts(counts: dict[str, int], title: str = "Measurement results", figsize: tuple = (8, 4)) -> plt.Figure:
@@ -68,4 +84,4 @@ def plot_statevector(state, title: str = "Statevector", figsize: tuple = (8, 4))
         if p > 1e-12 and (show_all or p > 0.05):
             phase_deg = np.degrees(np.angle(a))
             ax.text(i, p + 0.02, f"{p:.2f} (φ={phase_deg:.0f}°)", ha="center", va="bottom", fontsize=8)
-    return fig
+    return _close_if_inline(fig)
